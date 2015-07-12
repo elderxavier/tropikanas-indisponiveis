@@ -22,6 +22,9 @@
  * @package     base_default
  * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ * @lastupdate  2015-12-07
+ * @author      Elder Xavier
+ * @repository  https://github.com/elderxavier/tropikanas-indisponiveis
  */
 ?>
 <?php
@@ -32,10 +35,23 @@
  */
 ?>
 <?php
-    $_productCollection=$this->getLoadedProductCollection();
-    $_helper = $this->helper('catalog/output');
+$_sortCollection=$this->getLoadedProductCollection();
+$_collectionisSaleable=array();
+$_collectionnotSaleable=array();
+/*sort collection for $_product->isSaleable() in end array*/
+foreach ($_sortCollection as $_product) {
+        if($_product->isSaleable()){
+            array_push($_collectionisSaleable, $_product);
+        }else{
+            array_push($_collectionnotSaleable, $_product);
+        }
+    }
+$_productCollection = array_merge($_collectionisSaleable, $_collectionnotSaleable);    
+/**********************************************************/
+$_helper = $this->helper('catalog/output');
+    
 ?>
-<?php if(!$_productCollection->count()): ?>
+<?php if(!count($_productCollection)): ?>
 <p class="note-msg"><?php echo $this->__('Não há produtos nesta seleção') ?></p>
 <?php else: ?>
 <div class="category-products">
@@ -83,7 +99,7 @@
 
     <?php // Grid Mode ?>
 
-    <?php $_collectionSize = $_productCollection->count() ?>
+    <?php $_collectionSize = count($_productCollection); ?>
     <?php $_columnCount = $this->getColumnCount(); ?>
     <?php $i=0; foreach ($_productCollection as $_product): ?>
         <?php if ($i++%$_columnCount==0): ?>
